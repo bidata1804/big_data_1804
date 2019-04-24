@@ -282,5 +282,17 @@
             });
         }
     };
-    tracher.sessionStart();
+    //给window对象注入属性__AE__
+    window._AE_ = {
+        sessionStart : function () {
+            tracher.sessionStart();
+        },
+        searchEvent: function (keyword) {
+            tracher.searchEvent(keyword);
+        },
+        addCartEvent: function (pid) {
+            tracher.addCartEvent(pid);
+        }
+    };
+    window._AE_.sessionStart();
 })();
