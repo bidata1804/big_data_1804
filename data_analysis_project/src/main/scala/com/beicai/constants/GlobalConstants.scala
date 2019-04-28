@@ -6,4 +6,6 @@ package com.beicai.constants
 object GlobalConstants {
   //默认值
   val DEFAULT_VALUE="unknown"
+  val CONFIG_IP_RULE_DATA_PATH = "ip.rule.data.path"
+  val CONFIG_LOG_PATH_PREFIX = "log.path.prefix"
 }

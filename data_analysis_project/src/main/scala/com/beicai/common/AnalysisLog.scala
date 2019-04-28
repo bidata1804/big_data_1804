@@ -31,18 +31,17 @@ object AnalysisLog {
     */
 
   def handleRequestParams(logMap: mutable.Map[String, String], requestParams: String) = {
-      val fields = requestParams.split("?")
+      val fields = requestParams.split("[?]")
       if(fields.length == 2 && StringUtils.isNotBlank(fields(1))){
         val paramsText = fields(1)
-        val items = paramsText.split("&")
+        val items = paramsText.split("[&]")
         for(item <- items){
-            val kv = item.split("=")
+            val kv = item.split("[=]")
             val key = URLDecoder.decode(kv(0), "utf-8")
             val value = URLDecoder.decode(kv(1), "utf-8")
           logMap.put(key,value)
         }
       }
-    logMap
   }
 
   /**
@@ -51,7 +50,7 @@ object AnalysisLog {
   def analysisLog(logText: String, ipRuleArray: Array[IPRule]) = {
     var logMap : mutable.Map[String,String] = null
     if(StringUtils.isNotBlank(logText)){
-      val fields = logText.split("|")
+      val fields = logText.split("[|]")
       if(fields.length == 4){
         logMap = mutable.Map[String,String]()
         logMap.put(LogConstants.LOG_COLUMNS_NAME_IP,fields(0))

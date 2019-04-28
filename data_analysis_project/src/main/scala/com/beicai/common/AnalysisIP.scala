@@ -33,7 +33,7 @@ object AnalysisIP {
   /**
     * 二分查找法，找到了返回对应的角标，找不到返回-1
     *
-    * @param numIP
+
     * @param ipRuleArray
     */
   def binarySearch(numIp : Long,ipRuleArray : Array[IPRule]) = {
