@@ -1,8 +1,9 @@
 package com.beicai.util
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{Calendar, Date}
 import java.util.regex.Pattern
+import scala.util.control.Breaks._
 
 /**
   * Created by 任景阳 on 2019/4/25.
@@ -50,5 +51,66 @@ object Utils {
   def formatDate(longTime: Long, pattern: String) = {
     val sdf = new SimpleDateFormat(pattern)
     sdf.format(new Date(longTime))
+  }
+
+  /**
+    * 获取指定日期第二天的日期
+    */
+  def getNextDate(longTime: Long): Long = {
+    val calendar = Calendar.getInstance()
+    calendar.setTimeInMillis(longTime)
+    calendar.add(Calendar.DAY_OF_MONTH,1)
+    calendar.getTimeInMillis
+  }
+
+  /**
+    * 获取字符串中指定字段的值
+    *
+    * @param value
+    * session_count=0|1s_3s=0|4s_6s=0|7s_9s=0|10s_30s=0|30s_60s=0|1m_3m=0|3m_10m=0|10m_30m=0|30m=0|1_3=0|4_6=0|7_9=0|10_30=0|30_60=0|60=0
+    * @param fieldName
+    * session_count
+    */
+  def getFieldValue(value: String, fieldName: String) = {
+    var fieldValue : String = null
+    //Array(session_count=0,1s_3s=0,...)
+    breakable({
+      val items = value.split("[|]")
+      for (item <- items){
+        val kv = item.split("[=]")
+        if(kv(0).equals(fieldName)){
+          fieldValue = kv(1)
+          break()
+        }
+      }
+    })
+    fieldValue
+  }
+  /**
+    * 设置字符串中指定字段的值
+    *
+    * @param value
+    * session_count=0|1s_3s=0|4s_6s=0|7s_9s=0|10s_30s=0|30s_60s=0|1m_3m=0|3m_10m=0|10m_30m=0|30m=0|1_3=0|4_6=0|7_9=0|10_30=0|30_60=0|60=0
+    * @param fieldName
+    * session_count
+    * @param fieldNewValue
+    * 190
+    * @return
+    * session_count=190|1s_3s=0|4s_6s=0|7s_9s=0|10s_30s=0|30s_60s=0|1m_3m=0|3m_10m=0|10m_30m=0|30m=0|1_3=0|4_6=0|7_9=0|10_30=0|30_60=0|60=0
+    */
+  def setFieldValue(value: String, fieldName: String, fieldNewValue: String) = {
+    //Array(session_count=0,1s_3s=0,4s_6s=0,...)
+    val items = value.split("[|]")
+    breakable({
+    for(i <- 0 until(items.length)) {
+         val item = items(i)
+         val kv = item.split("[=]")
+         if(kv(0).equals(fieldName)){
+          items(i) = fieldName + "=" + fieldNewValue
+           break()
+        }
+      }
+    })
+      items.mkString("|")
   }
 }

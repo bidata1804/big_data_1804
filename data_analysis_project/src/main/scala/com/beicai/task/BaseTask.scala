@@ -1,7 +1,8 @@
 package com.beicai.task
 
+import com.beicai.util.Utils
 import org.apache.hadoop.conf.Configuration
-import org.apache.spark.SparkConf
+import org.apache.spark.{SparkConf, SparkException}
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -13,4 +14,32 @@ trait BaseTask {
        val conf = new SparkConf().setAppName(this.getClass.getSimpleName).setMaster("local")
        val spark = SparkSession.builder().config(conf).getOrCreate()
        val sc = spark.sparkContext
+
+       //输入任务参数
+       var inputDate: String = null
+
+       /**
+         * 验证参数是否正确
+         * 1,验证参数的个数  >=1
+         * 2,验证参数的各是 yyyy-MM-dd
+         *
+         * @param args
+         */
+       def validateInputArgs(args: Array[String]): Unit = {
+              if (args.length == 0) {
+                     throw new SparkException(
+                            s"""
+                               |Usage:${this.getClass.getSimpleName}
+                               |errorMessage:任务至少需要有一个日期参数
+        """.stripMargin)
+              }
+              if (!Utils.validateInputDate(args(0))) {
+                     throw new SparkException(
+                            s"""
+                               |Usage:${this.getClass.getSimpleName}
+                               |errorMessage:任务第一个参数是一个日期，日期的格式是：yyyy-MM-dd
+        """.stripMargin)
+              }
+              inputDate = args(0)
+       }
 }
